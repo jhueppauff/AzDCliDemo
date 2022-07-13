@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/vscode/devcontainers/dotnet:6.0-bullseye
 
 RUN apt-get update
-RUN apt-get upgrade
+RUN apt-get -y upgrade
 
 # Install NodeJS
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
