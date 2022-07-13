@@ -1,21 +1,7 @@
-FROM mcr.microsoft.com/vscode/devcontainers/dotnet:6.0-bullseye
-
-RUN apt-get update
-#RUN apt-get -y upgrade
-
-# Install NodeJS
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-RUN apt-get install -y nodejs
-
-# Install Azure CLI
-RUN curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-
-# Install Github CLI
-RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-RUN chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-RUN apt update
-RUN apt install gh
-
-# Install AZD Cli
-RUN curl -fsSL https://aka.ms/install-azd.sh | bash
+ARG VARIANT=bullseye
+FROM mcr.microsoft.com/vscode/devcontainers/base:0-${VARIANT}
+RUN curl -fsSL https://aka.ms/install-azd.sh | bash \
+    && curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg \
+    && mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg \
+    && sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/debian/$(lsb_release -rs | cut -d'.' -f 1)/prod $(lsb_release -cs) main" > /etc/apt/sources.list.d/dotnetdev.list' \
+    && apt-get update && apt-get install -y azure-functions-core-tools-4
